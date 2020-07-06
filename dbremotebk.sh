@@ -4,7 +4,7 @@
 # Version: 1.0
 # Script by: YamaCasis
 # Email: yamacasis@gmail.com
-# Created : 8 April 2019
+# Created : 6 July 2020
 
 ########################
 # Configuration        #
@@ -18,12 +18,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # Functions            #
 ########################
 
-create_mysql_backup() {
+create_dir_backup() {
   umask 177
 
   PFIX="$(date +'%Y%m%d%H%M%S')";
-  FILE="$s-$PFIX.sql.gz"
-  $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
+  FILE="$s-$PFIX.tar.gz"
+  tar -cvzf $FILE $s
 
 
    fileskb=`du -k "$FILE" | cut -f1`
@@ -43,38 +43,7 @@ create_mysql_backup() {
 
 }
 
-create_mongo_backup() {
-  umask 177
 
-  FILE="$s"
-  if [ -z  "$MONGO_user"]
-  then
-    CERT=""
-  else
-    CERT=" --username $MONGO_user --password $MONGO_password "
-  fi
-  PFIX="-$(date +'%Y%m%d%H%M%S')";
-  $MONGODUMP_path --host $MONGO_host -d $s $CERT --out $backup_path
-  tar zcf ''$FILE$PFIX'.tar.gz' $backup_path'/'$FILE'/'
-  rm -rf $FILE
-
-  FILE="$FILE$PFIX.tar.gz"
-
-  fileskb=`du -k "$FILE" | cut -f1`
-  if [ $fileskb -gt 0 ]
-	then
-		MSG="----> Mongo backup Database $S : $d : $FILE "
-	else
-		MSG="----> Mongo backup Database Failed $S : $d : $FILE "
-	fi
-  echo $MSG
-
-  if [ $LOGSTATE -eq 1 ]
-  then
-    log_it "$MSG"
-  fi
-
-}
 
 clean_backup() {
   if [ $KEEPLB -eq 0 ]
@@ -181,13 +150,12 @@ then
   log_it "$MSG"
 fi
 
-if [ $MYSQL -eq 1 ]
-then
-  for s in "${MYSQL_dbs_name[@]}";
+
+  for s in "${directories_name[@]}";
   do
     d=$(date +%F-%H:%M:%S)
 
-    create_mysql_backup
+    create_dir_backup
 
     send_backup
 
@@ -196,24 +164,7 @@ then
       clean_backup
     fi
   done
-fi
 
-if [ $MONGO -eq 1 ]
-then
-  for s in "${MONGO_dbs_name[@]}";
-  do
-    d=$(date +%F-%H:%M:%S)
-
-    create_mongo_backup
-
-    send_backup
-
-    if [ $DELE -eq 1 ]
-    then
-      clean_backup
-    fi
-  done
-fi
 
 d=$(date +%F-%H:%M:%S)
 MSG="+ Ended script ( $d ) ;  "

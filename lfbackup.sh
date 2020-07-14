@@ -29,9 +29,9 @@ create_dir_backup() {
    fileskb=`du -k "$FILE" | cut -f1`
 	if [ $fileskb -gt 0 ]
          then
-                 MSG="----> Mysql backup Database $S : $d : $FILE "
+                 MSG="----> Directory Backup Created  $S : $d : $FILE "
          else
-	         MSG="----> Mysql backup Database Failed $S : $d : $FILE "
+	         MSG="----> Directory Backup Failed $S : $d : $FILE "
          fi
 
   echo $MSG
@@ -132,7 +132,7 @@ log_it() {
     fi
 
     echo $1 >> $logfile;
-	echo $1$2
+	#echo $1$2
 }
 
 ##############################

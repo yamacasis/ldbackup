@@ -23,7 +23,8 @@ create_dir_backup() {
 
   PFIX="$(date +'%Y%m%d%H%M%S')";
   FILE="$base_name-$PFIX.tar.gz"
-  tar -cvzf $FILE $s
+  cd $backup_path 
+  tar -cvzf $backup_path/$FILE $s
 
 
    fileskb=`du -k "$FILE" | cut -f1`
@@ -67,10 +68,12 @@ send_backup() {
 
     ftp -ni $SERVER <<EOF
 	user $USERNAME $PASSWORD
-        mls  $base_name-*.gz $DIR/list.txt 
+	cd $REMOTEDIR	
+        mls  $base_name-*.gz list.txt 
 	quit
 EOF
-   ALLRemote="$(cat $DIR"/list.txt" | wc -l)";
+
+   ALLRemote="$(cat list.txt | wc -l)";
 nl='
 ' # yeah, nl is a newline in single quotes
     counter=0

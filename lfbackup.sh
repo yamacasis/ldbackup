@@ -92,7 +92,7 @@ nl='
 
     done <list.txt
 
-    ftp -n -i $SERVER <<EOF
+    ftp -n -p -i $SERVER <<EOF
     user $USERNAME $PASSWORD
     binary
     cd $REMOTEDIR

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Linux Database Remote Backup Script
+# Linux Directories Remote Backup Script
 # Version: 1.0
 # Script by: YamaCasis
 # Email: yamacasis@gmail.com
